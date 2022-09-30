@@ -17,9 +17,11 @@
 package com.netflix.graphql.dgs.subscriptions.websockets
 
 import com.netflix.graphql.dgs.DgsQueryExecutor
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.config.annotation.EnableWebSocket
@@ -31,6 +33,7 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler
 @Configuration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(DgsWebSocketConfigurationProperties::class)
+@ComponentScan("com.betfanatics", "com.netflix.graphql.dgs.subscriptions.websockets")
 open class DgsWebSocketAutoConfig {
     @Bean
     open fun webSocketHandler(@Suppress("SpringJavaInjectionPointsAutowiringInspection") dgsQueryExecutor: DgsQueryExecutor, configProps: DgsWebSocketConfigurationProperties): WebSocketHandler {
@@ -42,13 +45,14 @@ open class DgsWebSocketAutoConfig {
     internal open class WebSocketConfig(
         @Suppress("SpringJavaInjectionPointsAutowiringInspection") private val webSocketHandler: WebSocketHandler,
         private val handshakeInterceptor: HandshakeInterceptor,
+        @Autowired(required = true) private val tokenForwardingInterceptor: AtsTokenForwardingInterceptor,
         private val configProps: DgsWebSocketConfigurationProperties
     ) : WebSocketConfigurer {
 
         override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
             val handshakeHandler = DefaultHandshakeHandler()
             registry.addHandler(webSocketHandler, configProps.path).setHandshakeHandler(handshakeHandler)
-                .addInterceptors(handshakeInterceptor)
+                .addInterceptors(handshakeInterceptor, tokenForwardingInterceptor)
                 .setAllowedOrigins("*")
         }
     }

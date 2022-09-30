@@ -39,6 +39,14 @@ plugins {
 allprojects {
     group = "com.netflix.graphql.dgs"
     repositories {
+        mavenLocal()
+        maven {
+            url = uri("https://maven.pkg.github.com/fanatics-gaming/*")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
         mavenCentral()
     }
 
@@ -97,6 +105,8 @@ configure(subprojects.filterNot { it in internalBomModules }) {
     val jmhVersion = "1.35"
 
     dependencies {
+        implementation("javax.annotation:javax.annotation-api:1.3.2")
+        implementation("com.betfanatics:fbg-auth:0.1.0")
         // Apply the BOM to applicable subprojects.
         api(platform(project(":graphql-dgs-platform")))
         // Speed up processing of AutoConfig's produced by Spring Boot
@@ -123,11 +133,12 @@ configure(subprojects.filterNot { it in internalBomModules }) {
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(8))
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
 
     kapt {
+        correctErrorTypes = true
         arguments {
             arg(
                 "org.springframework.boot.configurationprocessor.additionalMetadataLocations",
@@ -164,7 +175,7 @@ configure(subprojects.filterNot { it in internalBomModules }) {
              * Ref. https://kotlinlang.org/docs/kotlin-reference.pdf
              */
             freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all-compatibility"
-            jvmTarget = "1.8"
+            jvmTarget = "17"
         }
     }
 
