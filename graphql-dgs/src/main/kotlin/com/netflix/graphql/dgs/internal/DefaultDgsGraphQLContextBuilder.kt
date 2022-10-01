@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.internal
 
+import com.betfanatics.auth.model.LoginContext
 import com.netflix.graphql.dgs.context.DgsContext
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilder
 import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest
@@ -82,4 +83,5 @@ data class DgsWebMvcRequestData(
     override val extensions: Map<String, Any>? = null,
     override val headers: HttpHeaders? = null,
     val webRequest: WebRequest? = null,
+    val loginContext: LoginContext? = null
 ) : DgsRequestData

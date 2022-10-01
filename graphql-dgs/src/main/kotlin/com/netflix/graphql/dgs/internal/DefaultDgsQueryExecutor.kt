@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.internal
 
+import com.betfanatics.auth.model.LoginContext
 import com.jayway.jsonpath.DocumentContext
 import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.TypeRef
@@ -65,14 +66,15 @@ class DefaultDgsQueryExecutor(
         extensions: Map<String, Any>?,
         headers: HttpHeaders?,
         operationName: String?,
-        webRequest: WebRequest?
+        webRequest: WebRequest?,
+        loginContext: LoginContext?
     ): ExecutionResult {
         val graphQLSchema: GraphQLSchema =
             if (reloadIndicator.reloadSchema())
                 schema.updateAndGet { schemaProvider.schema() }
             else
                 schema.get()
-        val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest))
+        val dgsContext = contextBuilder.build(DgsWebMvcRequestData(extensions, headers, webRequest, loginContext))
 
         val executionResult =
             BaseDgsQueryExecutor.baseExecute(
@@ -161,7 +163,7 @@ class DefaultDgsQueryExecutor(
     }
 
     private fun getJsonResult(query: String, variables: Map<String, Any>, headers: HttpHeaders? = null, servletWebRequest: ServletWebRequest? = null): String {
-        val executionResult = execute(query, variables, null, headers, null, servletWebRequest)
+        val executionResult = execute(query, variables, null, headers, null, servletWebRequest, null)
 
         if (executionResult.errors.size > 0) {
             throw QueryException(executionResult.errors)

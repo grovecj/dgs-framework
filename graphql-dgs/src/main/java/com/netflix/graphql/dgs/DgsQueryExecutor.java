@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs;
 
+import com.betfanatics.auth.model.LoginContext;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.TypeRef;
 import graphql.ExecutionResult;
@@ -43,7 +44,7 @@ public interface DgsQueryExecutor {
      * @return Returns a GraphQL {@link ExecutionResult}. This includes data and errors.
      */
     default ExecutionResult execute(@Language("GraphQL") String query) {
-        return execute(query, Collections.emptyMap(), null, null, null, null);
+        return execute(query, Collections.emptyMap(), null, null, null, null, null);
     }
 
     /**
@@ -54,7 +55,7 @@ public interface DgsQueryExecutor {
      */
     default ExecutionResult execute(@Language("GraphQL") String query,
                                     Map<String, Object> variables) {
-        return execute(query, variables, null, null, null, null);
+        return execute(query, variables, null, null, null, null, null);
     }
 
     /**
@@ -68,7 +69,7 @@ public interface DgsQueryExecutor {
     default ExecutionResult execute(@Language("GraphQL") String query,
                                     Map<String, Object> variables,
                                     String operationName) {
-        return execute(query, variables, null, null, operationName, null);
+        return execute(query, variables, null, null, operationName, null, null);
     }
 
     /**
@@ -83,7 +84,7 @@ public interface DgsQueryExecutor {
                                     Map<String, Object> variables,
                                     Map<String, Object> extensions,
                                     HttpHeaders headers) {
-        return execute(query, variables, extensions, headers, null, null);
+        return execute(query, variables, extensions, headers, null, null, null);
     }
 
     /**
@@ -104,7 +105,8 @@ public interface DgsQueryExecutor {
                             Map<String, Object> extensions,
                             HttpHeaders headers,
                             String operationName,
-                            WebRequest webRequest);
+                            WebRequest webRequest,
+                            LoginContext loginContext);
 
     /**
      * Executes a GraphQL query, parses the returned data, and uses a Json Path to extract specific elements out of the data.

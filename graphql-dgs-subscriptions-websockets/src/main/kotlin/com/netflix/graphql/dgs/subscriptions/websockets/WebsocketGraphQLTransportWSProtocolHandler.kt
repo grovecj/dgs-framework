@@ -16,6 +16,7 @@
 
 package com.netflix.graphql.dgs.subscriptions.websockets
 
+import com.betfanatics.auth.model.LoginContext
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.types.subscription.websockets.CloseCode
@@ -160,7 +161,8 @@ class WebsocketGraphQLTransportWSProtocolHandler(private val dgsQueryExecutor: D
                 payload.extensions,
                 null,
                 payload.operationName,
-                null
+                null,
+                session.attributes["loginContext"] as LoginContext?
             )
 
         val subscriptionStream: Publisher<ExecutionResult> = executionResult.getData()

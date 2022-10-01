@@ -209,7 +209,8 @@ open class DgsRestController(
                     extensions,
                     headers,
                     gqlOperationName,
-                    webRequest
+                    webRequest,
+                    null
                 )
             },
             logger, "Executed query in {}ms"
